@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cPanel — Painel Admin</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="backdrop" class="hidden">
+    <div id="app">
+      <!-- ===== Sidebar ===== -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">cP</div>
+          <div class="brand-text">
+            <h1>cPANEL</h1>
+            <span>painel admin · txAdmin style</span>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-item active" data-page="dashboard">
+            <span class="nav-ico">▦</span> Dashboard
+          </button>
+          <button class="nav-item" data-page="jogadores">
+            <span class="nav-ico">◉</span> Jogadores
+            <span class="nav-badge" id="nav-count">0</span>
+          </button>
+          <button class="nav-item" data-page="gerador">
+            <span class="nav-ico">▣</span> Garagem &amp; Armas
+          </button>
+          <button class="nav-item" data-page="comandos">
+            <span class="nav-ico">&gt;_</span> Comandos
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="conn"><span class="dot"></span> conectado</div>
+          <div class="my-id" id="my-id">ID —</div>
+          <div class="version">cpanel v1.0.0</div>
+        </div>
+      </aside>
+
+      <!-- ===== Conteudo ===== -->
+      <main class="content">
+        <header class="topbar">
+          <h2 id="page-title">Dashboard</h2>
+          <button id="close-btn">Fechar <kbd>ESC</kbd></button>
+        </header>
+
+        <!-- Dashboard -->
+        <section id="page-dashboard" class="page active">
+          <div class="stats">
+            <div class="stat-card">
+              <span class="stat-label">Jogadores online</span>
+              <span class="stat-value" id="stat-players">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Seu ID</span>
+              <span class="stat-value" id="stat-id">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Godmode</span>
+              <span class="stat-value state" id="stat-god">OFF</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Noclip</span>
+              <span class="stat-value state" id="stat-noclip">OFF</span>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <h3>Ações rápidas</h3>
+              <div class="btn-grid">
+                <button class="btn" data-self="toggleGod">Godmode</button>
+                <button class="btn" data-self="toggleNoclip">Noclip</button>
+                <button class="btn" data-self="toggleInvis">Invisível</button>
+                <button class="btn" data-self="heal">Curar (hp)</button>
+                <button class="btn" data-self="kill">Matar</button>
+                <button class="btn" data-self="fix">Consertar veículo</button>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Anúncio ao servidor</h3>
+              <p class="muted">Envia uma mensagem para todos os jogadores online.</p>
+              <div class="input-row">
+                <input type="text" id="announce-input" maxlength="200" placeholder="Mensagem do anúncio…" />
+                <button class="btn primary" id="announce-btn">Enviar</button>
+              </div>
+
+              <h3 class="mt">Estado</h3>
+              <div class="chips">
+                <span class="chip" id="chip-god">god: off</span>
+                <span class="chip" id="chip-noclip">noclip: off</span>
+                <span class="chip" id="chip-invis">invisível: off</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Jogadores -->
+        <section id="page-jogadores" class="page">
+          <div class="toolbar">
+            <input type="text" id="player-search" placeholder="Buscar jogador por nome ou ID…" />
+            <button class="btn primary" id="refresh-btn">Atualizar</button>
+          </div>
+
+          <div class="players-layout">
+            <div class="panel list-panel">
+              <div class="list-head">
+                <span>ID</span><span>Nome</span><span>Ping</span><span>Dist (m)</span>
+              </div>
+              <div id="player-list" class="list-body">
+                <div class="empty">Carregando jogadores…</div>
+              </div>
+            </div>
+
+            <div class="panel detail-panel" id="player-detail">
+              <div class="empty">Selecione um jogador na lista</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Garagem & Armas -->
+        <section id="page-gerador" class="page">
+          <div class="grid-2">
+            <div class="panel">
+              <h3>Spawnar veículo <small>/car &lt;modelo&gt;</small></h3>
+              <div class="input-row">
+                <input type="text" id="veh-input" placeholder="modelo (ex: adder)" />
+                <button class="btn primary" id="veh-btn">Spawnar</button>
+              </div>
+              <p class="muted">Modelos populares:</p>
+              <div class="chips" id="veh-chips"></div>
+            </div>
+
+            <div class="panel">
+              <h3>Dar arma <small>/arma &lt;arma&gt; [munição]</small></h3>
+              <div class="input-row">
+                <input type="text" id="wep-input" placeholder="arma (ex: pistol)" />
+                <input type="number" id="wep-ammo" value="250" min="1" max="9999" class="narrow" />
+                <button class="btn primary" id="wep-btn">Dar arma</button>
+              </div>
+              <p class="muted">Armas populares:</p>
+              <div class="chips" id="wep-chips"></div>
+              <p class="muted mt">Dica: use <kbd>all</kbd> para receber um kit completo.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Comandos -->
+        <section id="page-comandos" class="page">
+          <div class="panel">
+            <h3>Comandos administrativos</h3>
+            <table class="cmds">
+              <thead>
+                <tr><th>Comando</th><th>Descrição</th></tr>
+              </thead>
+              <tbody id="cmd-table"></tbody>
+            </table>
+            <p class="muted mt">Permissão necessária: ace <code>cpanel.use</code> · Painel: <kbd>/cpanel</kbd></p>
+          </div>
+        </section>
+      </main>
+
+      <div id="toasts"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
