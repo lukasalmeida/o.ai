@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "general": {
+    "serverName": "O.AI"
+  },
+  "server": {
+    "dataPath": "E:/txData/FiveMBasicServerCFXDefault_D6ABF9.base/"
+  }
+}

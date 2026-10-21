@@ -1,0 +1,8 @@
+# Secrets / server config — keep out of version control
+server.cfg
+server.cfg.bkp
+
+# Runtime data (player identifiers, hwids, logs)
+logs/
+*.log
+playersDB*.json

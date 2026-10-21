@@ -1,0 +1,33 @@
+[
+  {
+    "$schema": 1,
+    "name": "DJ_LZL",
+    "master": true,
+    "password_hash": "$2a$11$YMjciNUWDlYjpT115FLJGO3Rb2FwTg0F2aB01Cszz07IGHLmTXHn2",
+    "providers": {
+      "citizenfx": {
+        "id": "Olezele",
+        "identifier": "fivem:12141687",
+        "data": {}
+      }
+    },
+    "permissions": []
+  },
+  {
+    "$schema": 1,
+    "name": "olezele",
+    "master": false,
+    "password_hash": "$2a$11$ooHvMSHsZugynC5PqB3QN.D0OWyawpH.s4FlsCd/Hw/7hlwjq0rra",
+    "password_temporary": true,
+    "providers": {
+      "discord": {
+        "id": "230483698502336512",
+        "identifier": "discord:230483698502336512",
+        "data": {}
+      }
+    },
+    "permissions": [
+      "all_permissions"
+    ]
+  }
+]
