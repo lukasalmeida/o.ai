@@ -18,6 +18,10 @@ client_scripts {
     'client/main.lua',
 }
 
+dependencies {
+    'tx_inventory'
+}
+
 server_scripts {
     'server/main.lua',
 }

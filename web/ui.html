@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multicharacter | Seleção de Personagem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" class="app hidden">
+        <div class="background-overlay"></div>
+        
+        <!-- PARTÍCULAS DE FUNDO ANIMADAS -->
+        <canvas id="particles-canvas" class="particles-canvas"></canvas>
+
+        <!-- TELA DE SELEÇÃO DE PERSONAGEM -->
+        <div id="selection-screen" class="screen hidden">
+            <header class="screen-header">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>CIDADE LARANJA</h1>
+                        <span class="subtitle">SELEÇÃO DE PERSONAGEM</span>
+                    </div>
+                </div>
+                <div class="version-badge">v1.0.0</div>
+            </header>
+
+            <main class="selection-main">
+                <div class="characters-grid" id="characters-grid">
+                    <!-- Slots de personagem serão inseridos aqui via JS -->
+                </div>
+
+                <div class="character-details" id="character-details">
+                    <div class="details-placeholder" id="details-placeholder">
+                        <div class="placeholder-icon">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <h3>Selecione um Personagem</h3>
+                        <p>Clique em um slot para visualizar os detalhes</p>
+                    </div>
+
+                    <div class="details-content hidden" id="details-content">
+                        <div class="detail-header">
+                            <h2 id="detail-name">Nome do Personagem</h2>
+                            <span class="detail-slot" id="detail-slot">Slot 1</span>
+                        </div>
+                        <div class="detail-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">IDADE</span>
+                                <span class="stat-value" id="detail-age">--</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">BANCO</span>
+                                <span class="stat-value" id="detail-bank">$0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">EMPREGO</span>
+                                <span class="stat-value" id="detail-job">Desempregado</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">ÚLTIMA LOCALIZAÇÃO</span>
+                                <span class="stat-value" id="detail-location">Desconhecido</span>
+                            </div>
+                        </div>
+                        <div class="detail-actions">
+                            <button class="btn btn-primary btn-large" id="btn-enter-city">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 18l6-6-6-6"/>
+                                </svg>
+                                ENTRAR NA CIDADE
+                            </button>
+                            <button class="btn btn-danger btn-large" id="btn-delete-char">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                                EXCLUIR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="screen-footer">
+                <button class="btn btn-secondary" id="btn-create-new">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    CRIAR NOVO PERSONAGEM
+                </button>
+                <div class="footer-info">
+                    <span>Slots disponíveis: <span id="available-slots">3</span> / 3</span>
+                </div>
+            </footer>
+        </div>
+
+        <!-- TELA DE CRIAÇÃO - ETAPA 1: IDENTIDADE -->
+        <div id="creation-screen" class="screen hidden">
+            <div class="creation-progress">
+                <div class="progress-step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">IDENTIDADE</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">APARÊNCIA</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">ROUPAS</span>
+                </div>
+            </div>
+
+            <div class="creation-container">
+                <div class="creation-form" id="identity-form">
+                    <h2>Registro de Identidade</h2>
+                    <p class="form-subtitle">Preencha seus dados para começar sua jornada</p>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstname">Nome</label>
+                            <input type="text" id="firstname" name="firstname" placeholder="João" maxlength="20" required>
+                            <span class="char-count"><span id="firstname-count">0</span>/20</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Sobrenome</label>
+                            <input type="text" id="lastname" name="lastname" placeholder="Silva" maxlength="20" required>
+                            <span class="char-count"><span id="lastname-count">0</span>/20</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">Idade</label>
+                            <input type="number" id="age" name="age" placeholder="25" min="18" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Sexo</label>
+                            <div class="sex-selector" id="sex-selector">
+                                <button type="button" class="sex-option active" data-sex="M">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 7v10M7 12h10"/>
+                                    </svg>
+                                    <span>Masculino</span>
+                                </button>
+                                <button type="button" class="sex-option" data-sex="F">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 7v10M7 12h10"/>
+                                        <path d="M16 16l-4-4"/>
+                                    </svg>
+                                    <span>Feminino</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-validation" id="identity-validation"></div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" id="btn-back-selection">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                            </svg>
+                            VOLTAR
+                        </button>
+                        <button class="btn btn-primary btn-large" id="btn-next-appearance">
+                            <span>PRÓXIMO</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA DE CRIAÇÃO - ETAPA 2: APARÊNCIA -->
+        <div id="customization-screen" class="screen hidden">
+            <div class="creation-progress">
+                <div class="progress-step completed" data-step="1">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">IDENTIDADE</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step active" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">APARÊNCIA</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">ROUPAS</span>
+                </div>
+            </div>
+
+            <div class="customization-container">
+                <div class="camera-controls" id="camera-controls">
+                    <button class="camera-btn active" data-view="face" title="Foco no Rosto">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </button>
+                    <button class="camera-btn" data-view="body" title="Foco no Corpo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </button>
+                    <button class="camera-btn" data-view="feet" title="Foco nos Pés">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                            <path d="M15 12a3 3 0 0 0-3-3"/>
+                        </svg>
+                    </button>
+                    <button class="camera-btn" data-view="rotate" title="Girar 360°">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6"/>
+                            <path d="M1 20v-6h6"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="customization-tabs" id="customization-tabs">
+                    <button class="tab-btn active" data-tab="face">Rosto</button>
+                    <button class="tab-btn" data-tab="hair">Cabelo</button>
+                    <button class="tab-btn" data-tab="facialhair">Barba</button>
+                    <button class="tab-btn" data-tab="eyebrows">Sobrancelhas</button>
+                    <button class="tab-btn" data-tab="makeup">Maquiagem</button>
+                </div>
+
+                <div class="customization-content" id="customization-content">
+                    <!-- Conteúdo das abas será inserido via JS -->
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="btn-back-identity">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        VOLTAR
+                    </button>
+                    <button class="btn btn-primary btn-large" id="btn-next-clothes">
+                        <span>PRÓXIMO</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA DE CRIAÇÃO - ETAPA 3: ROUPAS -->
+        <div id="clothing-screen" class="screen hidden">
+            <div class="creation-progress">
+                <div class="progress-step completed" data-step="1">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">IDENTIDADE</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step completed" data-step="2">
+                    <span class="step-number">✓</span>
+                    <span class="step-label">APARÊNCIA</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step active" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">ROUPAS</span>
+                </div>
+            </div>
+
+            <div class="customization-container">
+                <div class="camera-controls" id="clothing-camera-controls">
+                    <button class="camera-btn active" data-view="body" title="Foco no Corpo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </button>
+                    <button class="camera-btn" data-view="feet" title="Foco nos Pés">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                            <path d="M15 12a3 3 0 0 0-3-3"/>
+                        </svg>
+                    </button>
+                    <button class="camera-btn" data-view="rotate" title="Girar 360°">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6"/>
+                            <path d="M1 20v-6h6"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="customization-tabs" id="clothing-tabs">
+                    <button class="tab-btn active" data-tab="tops">Camisas</button>
+                    <button class="tab-btn" data-tab="pants">Calças</button>
+                    <button class="tab-btn" data-tab="shoes">Sapatos</button>
+                    <button class="tab-btn" data-tab="accessories">Acessórios</button>
+                </div>
+
+                <div class="customization-content" id="clothing-content">
+                    <!-- Conteúdo das abas de roupas será inserido via JS -->
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="btn-back-appearance">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        VOLTAR
+                    </button>
+                    <button class="btn btn-primary btn-large" id="btn-finish-creation">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        FINALIZAR E ENTRAR
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+        <div id="delete-modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <h3>Confirmar Exclusão</h3>
+                </div>
+                <p>Tem certeza que deseja excluir <strong id="delete-char-name"></strong>? Esta ação não pode ser desfeita.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="btn-cancel-delete">Cancelar</button>
+                    <button class="btn btn-danger" id="btn-confirm-delete">Excluir Permanentemente</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOAST NOTIFICATIONS -->
+        <div id="toast-container" class="toast-container"></div>
+
+        <!-- LOADING OVERLAY -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loading-spinner"></div>
+            <p id="loading-text">Carregando...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

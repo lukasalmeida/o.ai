@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Multicharacter - Orange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- LOBBY / SELECAO -->
+    <section id="lobby" class="screen hidden">
+      <div class="panel left">
+        <h1 class="title">SELECAO DE <span>PERSONAGEM</span></h1>
+        <p class="subtitle">Escolha um slot para entrar na cidade</p>
+        <div id="slots" class="slots"></div>
+        <div class="actions">
+          <button id="btnCreate" class="btn primary">CRIAR NOVO PERSONAGEM</button>
+        </div>
+      </div>
+      <div class="panel right glass">
+        <h2 class="panel-title">INFORMACOES</h2>
+        <div id="charInfo" class="char-info empty">
+          <p>Passe o mouse ou clique em um slot para visualizar.</p>
+        </div>
+        <div class="enter-wrap">
+          <button id="btnEnter" class="btn primary big" disabled>ENTRAR NA CIDADE</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTRO -->
+    <section id="register" class="screen hidden">
+      <div class="card glass">
+        <h1 class="title">REGISTRO DE <span>IDENTIDADE</span></h1>
+        <p class="subtitle">Crie sua nova identidade</p>
+        <div class="form">
+          <div class="field">
+            <label>Nome</label>
+            <input type="text" id="firstName" placeholder="Ex: John" />
+          </div>
+          <div class="field">
+            <label>Sobrenome</label>
+            <input type="text" id="lastName" placeholder="Ex: Doe" />
+          </div>
+          <div class="field">
+            <label>Idade (min. 18)</label>
+            <input type="number" id="age" min="18" max="99" value="18" />
+          </div>
+          <div class="field">
+            <label>Sexo</label>
+            <div class="sex-toggle">
+              <button class="sex-btn active" data-sex="male">Masculino</button>
+              <button class="sex-btn" data-sex="female">Feminino</button>
+            </div>
+          </div>
+          <p id="regError" class="error hidden"></p>
+          <div class="form-actions">
+            <button id="btnRegBack" class="btn ghost">VOLTAR</button>
+            <button id="btnRegSubmit" class="btn primary">CONTINUAR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APARENCIA -->
+    <section id="appearance" class="screen hidden">
+      <div class="appear-layout">
+        <div class="appear-left glass">
+          <h1 class="title small">ESTILIZACAO</h1>
+          <div class="cam-controls">
+            <button class="btn ghost sm" data-focus="face">ROSTO</button>
+            <button class="btn ghost sm" data-focus="body">CORPO</button>
+            <button class="btn ghost sm" data-focus="feet">PES</button>
+            <button class="btn ghost sm" id="btnRotL">GIRAR E</button>
+            <button class="btn ghost sm" id="btnRotR">GIRAR D</button>
+          </div>
+
+          <div class="section">
+            <h3>Modelo</h3>
+            <div class="sex-toggle">
+              <button class="sex-btn" data-sex="male" id="sexMale">Masculino</button>
+              <button class="sex-btn" data-sex="female" id="sexFemale">Feminino</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Hereditariedade</h3>
+            <div class="row-group">
+              <label>Pai (forma)</label>
+              <div class="stepper" data-part="hb_shapeFirst"></div>
+            </div>
+            <div class="row-group">
+              <label>Mae (forma)</label>
+              <div class="stepper" data-part="hb_shapeSecond"></div>
+            </div>
+            <div class="row-group">
+              <label>Pai (pele)</label>
+              <div class="stepper" data-part="hb_skinFirst"></div>
+            </div>
+            <div class="row-group">
+              <label>Mae (pele)</label>
+              <div class="stepper" data-part="hb_skinSecond"></div>
+            </div>
+            <div class="row-group">
+              <label>Mistura forma</label>
+              <div class="stepper" data-part="hb_shapeMix" data-delta="0.05"></div>
+            </div>
+            <div class="row-group">
+              <label>Mistura pele</label>
+              <div class="stepper" data-part="hb_skinMix" data-delta="0.05"></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Cabelo</h3>
+            <div class="row-group"><label>Estilo</label><div class="stepper" data-part="hair_style"></div></div>
+            <div class="row-group"><label>Cor</label><div class="stepper" data-part="hair_color"></div></div>
+            <div class="row-group"><label>Destaque</label><div class="stepper" data-part="hair_highlight"></div></div>
+          </div>
+
+          <div class="section">
+            <h3>Sobrancelhas</h3>
+            <div class="row-group"><label>Estilo</label><div class="stepper" data-part="eb_style"></div></div>
+            <div class="row-group"><label>Cor</label><div class="stepper" data-part="eb_color"></div></div>
+            <div class="row-group"><label>Opacidade</label><div class="stepper" data-part="eb_opacity" data-delta="0.1"></div></div>
+          </div>
+
+          <div class="section">
+            <h3>Barba</h3>
+            <div class="row-group"><label>Estilo</label><div class="stepper" data-part="beard_style"></div></div>
+            <div class="row-group"><label>Cor</label><div class="stepper" data-part="beard_color"></div></div>
+            <div class="row-group"><label>Opacidade</label><div class="stepper" data-part="beard_opacity" data-delta="0.1"></div></div>
+          </div>
+
+          <div class="section">
+            <h3>Roupas</h3>
+            <div class="row-group"><label>Torso</label><div class="stepper" data-part="comp_3"></div></div>
+            <div class="row-group"><label>Torso Tex</label><div class="stepper" data-part="comp_3_tex"></div></div>
+            <div class="row-group"><label>Pernas</label><div class="stepper" data-part="comp_4"></div></div>
+            <div class="row-group"><label>Pernas Tex</label><div class="stepper" data-part="comp_4_tex"></div></div>
+            <div class="row-group"><label>Sapatos</label><div class="stepper" data-part="comp_6"></div></div>
+            <div class="row-group"><label>Sapatos Tex</label><div class="stepper" data-part="comp_6_tex"></div></div>
+            <div class="row-group"><label>Colete</label><div class="stepper" data-part="comp_8"></div></div>
+            <div class="row-group"><label>Colete Tex</label><div class="stepper" data-part="comp_8_tex"></div></div>
+            <div class="row-group"><label>Topo</label><div class="stepper" data-part="comp_11"></div></div>
+            <div class="row-group"><label>Topo Tex</label><div class="stepper" data-part="comp_11_tex"></div></div>
+            <div class="row-group"><label>Chapeu</label><div class="stepper" data-part="prop_0"></div></div>
+            <div class="row-group"><label>Oculos</label><div class="stepper" data-part="prop_1"></div></div>
+          </div>
+
+          <div class="section">
+            <h3>Recursos Faciais</h3>
+            <div id="faceFeatures"></div>
+          </div>
+
+          <div class="form-actions">
+            <button id="btnAppSave" class="btn primary big">FINALIZAR E ENTRAR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

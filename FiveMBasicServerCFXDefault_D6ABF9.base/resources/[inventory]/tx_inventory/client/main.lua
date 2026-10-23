@@ -441,6 +441,17 @@ CreateThread(function()
 end)
 
 -- ==========================================================
+--  EXPORTS PARA OUTROS RECURSOS (ex: tx_hud)
+-- ==========================================================
+exports('GetInventory', function()
+    return state
+end)
+
+exports('GetItem', function(name)
+    return TXINV.GetItem(name)
+end)
+
+-- ==========================================================
 --  INICIALIZAÇÃO
 -- ==========================================================
 CreateThread(function()

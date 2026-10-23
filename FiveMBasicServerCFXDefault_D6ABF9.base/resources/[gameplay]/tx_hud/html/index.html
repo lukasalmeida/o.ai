@@ -49,84 +49,52 @@
       <div class="si-logo" id="si-logo">TX</div>
       <div class="si-body">
         <div class="si-top">
-          <span class="si-name" id="si-name">TX ROLEPLAY</span>
-          <span class="si-tag" id="si-tag">v1.0.0</span>
+          <span class="si-name" id="si-name">Nome do Personagem</span>
+          <span class="si-tag" id="si-id">ID: 0</span>
         </div>
         <div class="si-grid">
           <div class="si-cell">
             <svg class="si-ico"><use href="#i-users"/></svg>
-            <span class="si-val"><b id="si-online">34</b> online</span>
+            <span class="si-val"><b id="si-online">0</b> online</span>
           </div>
           <div class="si-cell">
-            <svg class="si-ico"><use href="#i-star"/></svg>
-            <span class="si-val">ID <b id="si-id">#1024</b></span>
-          </div>
-          <div class="si-cell si-clock">
             <svg class="si-ico"><use href="#i-clock"/></svg>
-            <span class="si-val"><b id="si-time">16:54</b></span>
+            <span class="si-val">Tempo: <b id="si-time">00:00</b></span>
           </div>
           <div class="si-cell">
             <svg class="si-ico"><use href="#i-bulb"/></svg>
-            <span class="si-val" id="si-date">21/10/2026</span>
+            <span class="si-val" id="si-date">01/01/2026</span>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- ================= JOGADOR / MINIMAPA (inferior esquerdo) ================= -->
+    <!-- ================= JOGADOR (inferior esquerdo) ================= -->
     <section class="player-block" id="player-block">
 
       <!-- arma equipada -->
-      <div class="weapon-pill glass" id="weapon-pill">
+      <div class="weapon-pill glass" id="weapon-pill" style="display:none;">
         <span class="wp-icon"><svg><use href="#i-gun"/></svg></span>
-        <span class="wp-name" id="weapon-name">PISTOLA</span>
-        <span class="wp-ammo" id="weapon-ammo">30 <i>/</i> 120</span>
+        <span class="wp-name" id="weapon-name">DESARMADO</span>
+        <span class="wp-ammo" id="weapon-ammo">0 <i>/</i> 0</span>
       </div>
 
-      <!-- vitais + minimapa -->
-      <div class="player-row">
-        <div class="vitals glass" id="vitals">
-          <div class="vital">
-            <svg class="v-ico v-hp"><use href="#i-heart"/></svg>
-            <div class="v-track"><i class="v-fill" id="bar-health"></i></div>
-            <span class="v-num" id="val-health">100</span>
-          </div>
-          <div class="vital">
-            <svg class="v-ico v-armor"><use href="#i-shield"/></svg>
-            <div class="v-track"><i class="v-fill" id="bar-armor"></i></div>
-            <span class="v-num" id="val-armor">0</span>
-          </div>
-          <div class="vital">
-            <svg class="v-ico v-stam"><use href="#i-bolt"/></svg>
-            <div class="v-track"><i class="v-fill" id="bar-stamina"></i></div>
-            <span class="v-num" id="val-stamina">100</span>
-          </div>
+      <!-- vitais -->
+      <div class="vitals glass" id="vitals">
+        <div class="vital">
+          <svg class="v-ico v-hp"><use href="#i-heart"/></svg>
+          <div class="v-track"><i class="v-fill" id="bar-health"></i></div>
+          <span class="v-num" id="val-health">100</span>
         </div>
-
-        <div class="minimap glass" id="minimap">
-          <div class="mm-canvas" id="mm-canvas">
-            <span class="mm-road mm-r1"></span>
-            <span class="mm-road mm-r2"></span>
-            <span class="mm-road mm-r3"></span>
-            <span class="mm-road mm-r4"></span>
-            <span class="mm-road mm-r5"></span>
-            <span class="mm-block mm-b1"></span>
-            <span class="mm-block mm-b2"></span>
-            <span class="mm-block mm-b3"></span>
-            <span class="mm-water"></span>
-          </div>
-          <div class="mm-zone" id="mm-zone">
-            <span class="mm-zone-tag">ZONA SEGURA</span>
-          </div>
-          <div class="mm-arrow" id="mm-arrow">
-            <svg viewBox="0 0 24 24"><path d="M12 2.5 19.5 21 12 16.6 4.5 21 12 2.5z"/></svg>
-          </div>
-          <div class="mm-strip mm-strip-top">
-            <span class="mm-place" id="mm-place">ROUTE 68</span>
-          </div>
-          <div class="mm-strip mm-strip-bottom">
-            <span id="mm-coords">X 120.44 · Y -45.02</span>
-          </div>
+        <div class="vital">
+          <svg class="v-ico v-armor"><use href="#i-shield"/></svg>
+          <div class="v-track"><i class="v-fill" id="bar-armor"></i></div>
+          <span class="v-num" id="val-armor">0</span>
+        </div>
+        <div class="vital">
+          <svg class="v-ico v-stam"><use href="#i-bolt"/></svg>
+          <div class="v-track"><i class="v-fill" id="bar-stamina"></i></div>
+          <span class="v-num" id="val-stamina">100</span>
         </div>
       </div>
 
@@ -136,28 +104,15 @@
           <svg class="mc-ico mc-cash"><use href="#i-cash"/></svg>
           <div class="mc-text">
             <span class="mc-label">Carteira</span>
-            <span class="mc-value" id="money-cash">$ 12.500</span>
+            <span class="mc-value" id="money-cash">$ 0</span>
           </div>
         </div>
         <div class="money-chip glass">
           <svg class="mc-ico mc-bank"><use href="#i-bank"/></svg>
           <div class="mc-text">
             <span class="mc-label">Banco</span>
-            <span class="mc-value" id="money-bank">$ 148.320</span>
+            <span class="mc-value" id="money-bank">$ 0</span>
           </div>
-        </div>
-      </div>
-
-      <!-- nivel / XP -->
-      <div class="xp-card glass">
-        <div class="xp-top">
-          <span class="xp-level" id="xp-level">NV 24</span>
-          <span class="xp-name" id="xp-name">Carlos Mendez</span>
-          <span class="xp-values" id="xp-values">1.240 / 2.000 XP</span>
-        </div>
-        <div class="xp-track">
-          <i class="xp-fill" id="xp-fill"></i>
-          <i class="xp-shine"></i>
         </div>
       </div>
     </section>

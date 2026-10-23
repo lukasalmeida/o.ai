@@ -14,19 +14,18 @@
      Estado
      --------------------------------------------------------------------- */
   var state = {
-    money: { cash: 12500, bank: 148320 },
-    level: 24,
-    xp: { current: 1240, needed: 2000 },
-    name: 'Carlos Mendez',
+    money: { cash: 0, bank: 0 },
+    name: 'Carregando...',
+    level: 1,
     health: 100,
     armor: 0,
     stamina: 100,
-    weapon: { name: 'PISTOLA', ammo: 30, reserve: 120 },
+    weapon: { name: 'DESARMADO', ammo: 0, reserve: 0, unarmed: true },
     vehicle: {
       active: false,
       speed: 0,
       maxSpeed: 220,
-      fuel: 68,
+      fuel: 0,
       rpm: 0,
       rpmValue: 0,
       gear: 1,
@@ -37,24 +36,16 @@
     },
     server: {
       name: 'TX ROLEPLAY',
-      tag: 'v1.0.0',
-      players: 34,
-      playerId: 1024,
-      time: '16:54',
-      date: '21/10/2026',
+      players: 0,
+      playerId: 0,
+      time: '00:00',
+      date: '01/01/2026',
       timeLocked: false
     },
-    zone: { safe: true, name: 'ROUTE 68', x: 120.44, y: -45.02, heading: 0 },
-    slots: [
-      { key: '1', icon: 'i-food', label: 'Frango', count: 3 },
-      { key: '2', icon: 'i-medkit', label: 'Bandagem', count: 5 },
-      { key: '3', icon: 'i-can', label: 'Refrigerante', count: 12 },
-      { key: '4', icon: 'i-battery', label: 'Celular', count: 1 },
-      { key: '5', icon: 'i-key', label: 'Chave', count: 2 },
-      { key: '6', icon: 'i-flame', label: 'Molotov', count: 4 }
-    ],
+    zone: { safe: false, name: 'DESCONHECIDO', x: 0, y: 0, heading: 0 },
+    slots: [],
     activeSlot: 1,
-    hudVisible: true
+    hudVisible: false  -- HUD inicia oculto, aparece com TAB
   };
 
   /* ---------------------------------------------------------------------
@@ -104,35 +95,20 @@
     setText($('#val-stamina'), Math.round(state.stamina));
   }
 
-  function renderXp() {
-    setText($('#xp-level'), 'NV ' + state.level);
-    setText($('#xp-name'), state.name);
-    setText($('#xp-values'), fmtNumber(state.xp.current) + ' / ' + fmtNumber(state.xp.needed) + ' XP');
-    var pct = state.xp.needed > 0 ? (state.xp.current / state.xp.needed) * 100 : 0;
-    setBar($('#xp-fill'), pct);
-  }
-
   function renderWeapon() {
     setText($('#weapon-name'), state.weapon.name);
     setText($('#weapon-ammo'), state.weapon.ammo + ' / ' + state.weapon.reserve);
+    // Mostra/oculta o pill da arma baseado se está armado
+    var pill = $('#weapon-pill');
+    if (pill) pill.style.display = state.weapon.unarmed ? 'none' : 'flex';
   }
 
   function renderServer() {
-    setText($('#si-name'), state.server.name);
-    setText($('#si-tag'), state.server.tag);
+    setText($('#si-name'), state.name);
+    setText($('#si-id'), 'ID: ' + state.server.playerId);
     setText($('#si-online'), state.server.players);
-    setText($('#si-id'), '#' + state.server.playerId);
     setText($('#si-time'), state.server.time);
     setText($('#si-date'), state.server.date);
-  }
-
-  function renderZone() {
-    setText($('#mm-place'), state.zone.name);
-    setText($('#mm-coords'), 'X ' + state.zone.x.toFixed(2) + ' · Y ' + state.zone.y.toFixed(2));
-    var zone = $('#mm-zone');
-    if (zone) zone.classList.toggle('is-off', !state.zone.safe);
-    var arrow = $('#mm-arrow');
-    if (arrow) arrow.style.transform = 'rotate(' + state.zone.heading + 'deg)';
   }
 
   var lastSpeed = null;
@@ -180,10 +156,11 @@
     var slots = $$('#quickbar .qslot');
     for (var i = 0; i < slots.length; i++) {
       var btn = slots[i];
-      var slot = state.slots[i];
       var key = btn.dataset.slot;
-      if (key === 'voice') continue;
-      if (!slot) continue;
+      if (key === 'voice') { btn.style.display = ''; continue; }
+      var slot = state.slots[i];
+      if (!slot) { btn.style.display = 'none'; continue; }
+      btn.style.display = '';
       setText($('.qkey', btn), slot.key);
       setText($('.qlabel', btn), slot.label);
       setText($('.qcount', btn), slot.count);
@@ -198,10 +175,8 @@
   function renderAll() {
     renderMoney();
     renderVitals();
-    renderXp();
     renderWeapon();
     renderServer();
-    renderZone();
     renderVehicle();
     renderSlots();
   }
@@ -216,11 +191,6 @@
       if (typeof data.money.cash === 'number') state.money.cash = data.money.cash;
       if (typeof data.money.bank === 'number') state.money.bank = data.money.bank;
     }
-    if (typeof data.level === 'number') state.level = data.level;
-    if (data.xp) {
-      if (typeof data.xp.current === 'number') state.xp.current = data.xp.current;
-      if (typeof data.xp.needed === 'number') state.xp.needed = data.xp.needed;
-    }
     if (typeof data.name === 'string') state.name = data.name;
 
     if (typeof data.health === 'number') state.health = data.health;
@@ -231,6 +201,7 @@
       state.weapon.name = data.weapon.name || state.weapon.name;
       if (typeof data.weapon.ammo === 'number') state.weapon.ammo = data.weapon.ammo;
       if (typeof data.weapon.reserve === 'number') state.weapon.reserve = data.weapon.reserve;
+      if (typeof data.weapon.unarmed === 'boolean') state.weapon.unarmed = data.weapon.unarmed;
     }
 
     if (data.vehicle) {
@@ -251,8 +222,6 @@
 
     if (data.server) {
       var s = data.server;
-      if (s.name) state.server.name = s.name;
-      if (s.tag) state.server.tag = s.tag;
       if (typeof s.players === 'number') state.server.players = s.players;
       if (typeof s.playerId === 'number') state.server.playerId = s.playerId;
       if (s.time) {
@@ -260,14 +229,6 @@
         state.server.timeLocked = true; /* o Lua manda o tempo do jogo */
       }
       if (s.date) state.server.date = s.date;
-    }
-
-    if (data.zone) {
-      if (typeof data.zone.safe === 'boolean') state.zone.safe = data.zone.safe;
-      if (data.zone.name) state.zone.name = data.zone.name;
-      if (typeof data.zone.x === 'number') state.zone.x = data.zone.x;
-      if (typeof data.zone.y === 'number') state.zone.y = data.zone.y;
-      if (typeof data.zone.heading === 'number') state.zone.heading = data.zone.heading;
     }
 
     if (Array.isArray(data.slots)) {
@@ -356,12 +317,6 @@
         state.money.bank = data.bank || 0;
         renderMoney();
         break;
-      case 'xp':
-        state.xp.current = data.current || 0;
-        state.xp.needed = data.needed || 0;
-        if (typeof data.level === 'number') state.level = data.level;
-        renderXp();
-        break;
       case 'slot':
         setSlot(data.index);
         break;
@@ -416,6 +371,10 @@
     if (e.target && /input|textarea/i.test(e.target.tagName)) return;
     if (e.key >= '1' && e.key <= '6') setSlot(Number(e.key));
     if (e.key === 'v' || e.key === 'V') setTalking(true);
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      setHudVisible(!state.hudVisible);
+    }
   });
 
   document.addEventListener('keyup', function (e) {
@@ -490,8 +449,6 @@
       state.health = clamp(100 - (t % 40), 20, 100);
       state.armor = 60;
       state.stamina = clamp(60 + Math.sin(t / 3) * 40, 0, 100);
-      state.zone.heading = (state.zone.heading + 4) % 360;
-      state.zone.x += 0.01;
       state.server.players = 34 + (t % 5);
       renderAll();
     }, 120);

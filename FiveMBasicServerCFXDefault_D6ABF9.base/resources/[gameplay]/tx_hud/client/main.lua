@@ -6,11 +6,12 @@
 --   TriggerServerEvent('txhud:setSlots', slots)   -- slots = { {icon='i-food', label='Frango', count=3}, ... }
 --   TriggerServerEvent('txhud:setTasks', tasks)   -- tasks = { {title=..., desc=..., key='F', dist='1km', reward='$5.000', progress=40, done=false}, ... }
 
-local hudVisible = true
+local hudVisible = false  -- HUD inicia oculto, aparece com TAB
 local activeSlot = 1
 local seatbelt = false
 local inVehicle = false
 local lastState = {}
+local serverPlayerCount = 0
 
 -- Zonas seguras (x, y, raio em metros)
 local safeZones = {
@@ -96,6 +97,79 @@ local function getDateString()
 end
 
 -- ---------------------------------------------------------------------
+-- Busca dados do inventario (tx_inventory)
+-- ---------------------------------------------------------------------
+-- Mapeia nomes de itens do tx_inventory para icones SVG do HUD
+local itemIconMap = {
+    water = 'i-can', coffee = 'i-can', energy = 'i-can',
+    bread = 'i-food', burger = 'i-food', protein = 'i-food',
+    bandage = 'i-medkit', medkit = 'i-medkit',
+    pistol = 'i-gun', revolver = 'i-gun', smg = 'i-gun', rifle = 'i-gun', shotgun = 'i-gun', knife = 'i-gun',
+    carkey = 'i-key', crowbar = 'i-key', lockpick = 'i-key', flashlight = 'i-key',
+    ammo_pistol = 'i-battery', ammo_rifle = 'i-battery',
+    phone = 'i-phone', radio = 'i-radio',
+    backpack = 'i-box', duffelbag = 'i-box', identity = 'i-star', licence = 'i-star',
+}
+
+local function itemIcon(name)
+    return itemIconMap[name] or 'i-box'
+end
+
+local function getInventoryData()
+    -- Tenta obter dados do tx_inventory via export
+    local inv = exports['tx_inventory'] and exports['tx_inventory']:GetInventory()
+    if inv and inv.items then
+        -- Indexa os itens pelo numero do slot (hotbar = slots 31..35)
+        local bySlot = {}
+        for _, item in ipairs(inv.items) do
+            if item and item.slot then
+                bySlot[tonumber(item.slot)] = item
+            end
+        end
+
+        local slots = {}
+        for i = 1, 5 do
+            local item = bySlot[30 + i]
+            if item then
+                local def = exports['tx_inventory'] and exports['tx_inventory']:GetItem(item.name)
+                slots[#slots + 1] = {
+                    key = tostring(i),
+                    icon = itemIcon(item.name),
+                    label = def and def.label or item.name,
+                    count = item.amount or 0
+                }
+            else
+                slots[#slots + 1] = { key = tostring(i), icon = 'i-box', label = '', count = 0 }
+            end
+        end
+        return slots
+    end
+    return {}
+end
+
+local function getPlayerMoney()
+    -- Tenta obter dinheiro do tx_inventory framework
+    local inv = exports['tx_inventory'] and exports['tx_inventory']:GetInventory()
+    if inv and inv.player then
+        local m = inv.player.money
+        if type(m) == 'table' then
+            return { cash = m.cash or 0, bank = m.bank or 0 }
+        elseif type(m) == 'number' then
+            return { cash = m, bank = 0 }
+        end
+    end
+    return { cash = 0, bank = 0 }
+end
+
+local function getPlayerName()
+    local inv = exports['tx_inventory'] and exports['tx_inventory']:GetInventory()
+    if inv and inv.player and inv.player.name then
+        return inv.player.name
+    end
+    return GetPlayerName(PlayerId()) or 'Jogador'
+end
+
+-- ---------------------------------------------------------------------
 -- Envio do estado completo para a NUI
 -- ---------------------------------------------------------------------
 local function pushState(force)
@@ -131,6 +205,11 @@ local function pushState(force)
         vehicle.locked = GetVehicleDoorLockStatus(veh) == 2
     end
 
+    local money = getPlayerMoney()
+    local slots = getInventoryData()
+    local pname = getPlayerName()
+    local pid = GetPlayerServerId(PlayerId())
+
     local payload = {
         action = 'hud',
         health = math.floor(GetEntityHealth(ped) - 100),
@@ -138,21 +217,24 @@ local function pushState(force)
         stamina = math.floor(GetPlayerStamina(PlayerId())),
         weapon = getWeaponInfo(ped),
         vehicle = vehicle,
-        zone = {
-            safe = isNearSafeZone(coords),
-            name = getZoneName(coords),
-            x = coords.x,
-            y = coords.y,
-            heading = GetEntityHeading(ped),
-        },
+        money = { cash = money.cash, bank = money.bank },
+        name = pname,
         server = {
             time = getTimeString(),
             date = getDateString(),
-            playerId = GetPlayerServerId(PlayerId()),
+            players = serverPlayerCount > 0 and serverPlayerCount or #GetPlayers(),
+            playerId = pid,
         },
+        slots = slots,
         activeSlot = activeSlot,
         hudVisible = hudVisible,
     }
+
+    -- Assinatura dos slots do hotbar (para detectar mudancas de inventario)
+    local slotSig = ''
+    for i = 1, #slots do
+        slotSig = slotSig .. tostring(slots[i].label or '') .. ':' .. tostring(slots[i].count or 0) .. ','
+    end
 
     -- Evita spam: so envia se algo relevante mudou (ou se for forcado)
     local signature = table.concat({
@@ -161,8 +243,10 @@ local function pushState(force)
         tostring(vehicle.active), tostring(math.floor(vehicle.speed)),
         tostring(math.floor(vehicle.fuel)), tostring(vehicle.gear),
         tostring(vehicle.engine), tostring(vehicle.lights), tostring(vehicle.locked),
-        payload.zone.name, tostring(payload.zone.safe), tostring(math.floor(payload.zone.heading)),
-        payload.server.time, tostring(activeSlot), tostring(hudVisible),
+        tostring(money.cash), tostring(money.bank),
+        pname, tostring(pid),
+        tostring(payload.server.players), payload.server.time, tostring(activeSlot), tostring(hudVisible),
+        slotSig,
     }, '|')
 
     if force or signature ~= lastState.signature then
@@ -170,6 +254,16 @@ local function pushState(force)
         SendNUIMessage(payload)
     end
 end
+
+-- ---------------------------------------------------------------------
+-- Aguarda tx_inventory estar disponível
+-- ---------------------------------------------------------------------
+CreateThread(function()
+    while not exports['tx_inventory'] do
+        Wait(500)
+    end
+    print('[tx_hud] tx_inventory exports disponíveis')
+end)
 
 -- ---------------------------------------------------------------------
 -- Loop principal
@@ -208,11 +302,6 @@ end)
 -- ---------------------------------------------------------------------
 -- Comandos e teclas
 -- ---------------------------------------------------------------------
-RegisterCommand('hud', function()
-    hudVisible = not hudVisible
-    pushState(true)
-end, false)
-
 RegisterCommand('txhud_toggle', function()
     hudVisible = not hudVisible
     pushState(true)
@@ -228,37 +317,28 @@ RegisterCommand('txhud_seatbelt', function()
     pushState(true)
 end, false)
 
-for i = 1, 6 do
-    RegisterCommand('txhud_slot_' .. i, function()
-        activeSlot = i
-        pushState(true)
-        TriggerServerEvent('txhud:slotChanged', i)
-    end, false)
-end
-
 -- Atalhos de teclado (as teclas padrao podem ser trocadas nas opcoes do FiveM)
-RegisterKeyMapping('txhud_toggle', 'Alternar HUD', 'keyboard', 'F7')
+RegisterKeyMapping('txhud_toggle', 'Alternar HUD (TAB)', 'keyboard', 'TAB')
 RegisterKeyMapping('txhud_seatbelt', 'Colocar/remover cinto', 'keyboard', 'B')
-for i = 1, 6 do
-    RegisterKeyMapping('txhud_slot_' .. i, 'Slot ' .. i, 'keyboard', tostring(i))
-end
 
 -- ---------------------------------------------------------------------
--- Recebe dados do servidor
+-- Recebe alertas do servidor
 -- ---------------------------------------------------------------------
 RegisterNetEvent('txhud:players')
 AddEventHandler('txhud:players', function(players)
-    SendNUIMessage({ action = 'hud', server = { players = players } })
+    if type(players) == 'number' then
+        serverPlayerCount = players
+    end
 end)
 
 RegisterNetEvent('txhud:playerData')
 AddEventHandler('txhud:playerData', function(data)
+    if type(data) ~= 'table' then return end
     SendNUIMessage({
         action = 'hud',
         name = data.name,
-        level = data.level,
-        xp = data.xp,
         money = data.money,
+        level = data.level,
     })
 end)
 
@@ -272,14 +352,14 @@ AddEventHandler('txhud:tasks', function(tasks)
     SendNUIMessage({ action = 'tasks', tasks = tasks })
 end)
 
-RegisterNetEvent('txhud:alert')
-AddEventHandler('txhud:alert', function(text, danger)
-    SendNUIMessage({ action = 'alert', text = text, danger = danger })
-end)
-
 RegisterNetEvent('txhud:voice')
 AddEventHandler('txhud:voice', function(enabled)
     SendNUIMessage({ action = 'talking', enabled = enabled })
+end)
+
+RegisterNetEvent('txhud:alert')
+AddEventHandler('txhud:alert', function(text, danger)
+    SendNUIMessage({ action = 'alert', text = text, danger = danger })
 end)
 
 -- ---------------------------------------------------------------------

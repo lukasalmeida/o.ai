@@ -49,7 +49,7 @@ Config.MaxStack           = 100   -- limite máximo por stack
 Config.GroundItemExpire   = 30    -- minutos até o item do chão sumir (0 = nunca)
 Config.AntiSpamMs         = 250   -- intervalo mínimo entre ações do mesmo jogador
 Config.DefaultGroundProp  = 'prop_med_bag_01'
-Config.EnableHotbarHud    = true  -- mostra a hotbar na tela mesmo com o inventário fechado
+Config.EnableHotbarHud    = false  -- mostra a hotbar na tela mesmo com o inventário fechado (DESABILITADO: usa tx_hud)
 Config.ShowGroundItems    = true  -- lista itens do chão no NUI
 
 -- ==========================================================
