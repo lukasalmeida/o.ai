@@ -437,8 +437,13 @@ RegisterNUICallback('close', function(_, cb)
     cb({ ok = true })
 end)
 
--- ESC de seguranca: bloqueia o menu de pausa do GTA enquanto o painel
--- estiver aberto e fecha o painel se o ESC for detectado no controle
+-- ESC de seguranca: enquanto o painel estiver aberto, bloqueia o menu de
+-- pausa do GTA e fecha o painel por qualquer um dos caminhos do ESC:
+--   1) NUI (keydown/keyup Escape -> callback "close")
+--   2) input do jogo: IsDisabledControlJustPressed continua registrando o
+--      pressionamento mesmo com o control desabilitado (o IsControlJustPressed
+--      NAO registra - por isso o ESC "antigo" nao fechava nada)
+--   3) menu de pausa aberto (caso o ESC tenha sido consumido pelo jogo)
 CreateThread(function()
     while true do
         if panelOpen or GetGameTimer() < escBlockUntil then
@@ -446,8 +451,16 @@ CreateThread(function()
             DisableControlAction(0, 200, true)
             DisableControlAction(0, 202, true)
             DisableControlAction(0, 322, true)
-            if panelOpen and (IsControlJustPressed(0, 200) or IsControlJustPressed(0, 322)) then
-                closePanel()
+
+            if panelOpen then
+                if IsPauseMenuActive() then
+                    closePanel()
+                    SetFrontendActive(false)
+                elseif IsDisabledControlJustPressed(0, 322)
+                    or IsDisabledControlJustPressed(0, 200)
+                    or IsDisabledControlJustPressed(0, 202) then
+                    closePanel()
+                end
             end
             Wait(0)
         else
@@ -499,6 +512,7 @@ local SUGGESTIONS = {
     { '/fix', 'Consertar o veiculo atual' },
     { '/dv', 'Remover o veiculo mais proximo (ate 10m)' },
     { '/dvall', 'Remover todos os veiculos num raio', { { name = 'raio', help = 'metros, ex: 100 (max 500)' } } },
+    { '/police', 'Ligar/desligar o bloqueio da policia NPC' },
     { '/anuncio', 'Enviar anuncio para todos', { { name = 'mensagem', help = 'texto do anuncio' } } },
 }
 

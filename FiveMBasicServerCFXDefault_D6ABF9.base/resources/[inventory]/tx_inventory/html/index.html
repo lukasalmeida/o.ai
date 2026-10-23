@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tx_inventory</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ============================ HUD (inventário fechado) ============================ -->
+    <div id="hud" class="hud">
+        <div class="hud-item" id="hud-weight">
+            <div class="hud-weight-bar"><span id="hud-weight-fill"></span></div>
+            <span id="hud-weight-text">0 / 30 kg</span>
+        </div>
+        <div id="hud-hotbar" class="hud-hotbar"></div>
+    </div>
+
+    <!-- ============================ PAINEL PRINCIPAL ============================ -->
+    <div id="inventory" class="inventory hidden">
+
+        <header class="inv-header">
+            <div class="inv-title">
+                <span class="dot"></span>
+                INVENTÁRIO
+            </div>
+            <div class="inv-hint">
+                Arraste para mover &middot; Clique duplo usa &middot; Botão direito abre o menu
+                <span class="kbd">'</span> fecha
+            </div>
+        </header>
+
+        <div class="inv-body">
+
+            <!-- ---------- PERSONAGEM ---------- -->
+            <aside class="panel char-panel">
+                <div class="char-head">
+                    <div class="avatar">
+                        <svg viewBox="0 0 24 24" width="42" height="42" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                    <div class="char-info">
+                        <div class="char-name" id="p-name">Jogador</div>
+                        <div class="char-job" id="p-job">Desempregado</div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <span class="stat-label">Dinheiro</span>
+                    <span class="stat-value money" id="p-money">$0</span>
+                </div>
+
+                <div class="weight-block">
+                    <div class="weight-head">
+                        <span>PESO</span>
+                        <span id="weight-text">0.0 / 30.0 kg</span>
+                    </div>
+                    <div class="weight-bar">
+                        <span id="weight-fill"></span>
+                    </div>
+                    <div class="weight-foot">
+                        <span id="weight-percent">0%</span>
+                        <span id="slots-text">0 / 30 slots</span>
+                    </div>
+                </div>
+
+                <div class="legend">
+                    <div><span class="tag tag-hb">1-5</span> Acesso rápido</div>
+                    <div><span class="tag tag-back">Mochila</span> 30 slots base</div>
+                    <div><span class="tag tag-ground">Chão</span> itens por perto</div>
+                    <div><span class="tag tag-trash">Lixo</span> arraste para destruir</div>
+                </div>
+            </aside>
+
+            <!-- ---------- MOCHILA ---------- -->
+            <main class="panel bag-panel">
+                <div class="panel-title">
+                    <span>MOCHILA</span>
+                    <span class="panel-title-sub" id="bag-count">0 / 30</span>
+                </div>
+                <div id="grid" class="grid"></div>
+            </main>
+
+            <!-- ---------- CHÃO + LIXO ---------- -->
+            <aside class="panel side-panel">
+                <div class="panel-title">
+                    <span>CHÃO</span>
+                    <span class="panel-title-sub" id="ground-count">0</span>
+                </div>
+                <div id="ground-list" class="ground-list">
+                    <div class="empty-ground">Nenhum item por perto</div>
+                </div>
+
+                <div id="trash" class="trash-zone">
+                    <div class="trash-icon">🗑️</div>
+                    <div class="trash-text">
+                        <strong>DESCARTAR</strong>
+                        <small>Arraste um item aqui para destruir</small>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- ---------- HOTBAR ---------- -->
+        <footer class="inv-footer">
+            <div class="footer-label">ACESSO RÁPIDO</div>
+            <div id="hotbar" class="hotbar"></div>
+        </footer>
+    </div>
+
+    <!-- ============================ MENU DE CONTEXTO ============================ -->
+    <div id="context-menu" class="context-menu hidden">
+        <div class="ctx-title" id="ctx-title">Item</div>
+        <button class="ctx-item" data-action="use"><span>🖐️</span> Usar / Equipar</button>
+        <button class="ctx-item" data-action="give"><span>🤝</span> Dar a um jogador</button>
+        <button class="ctx-item" data-action="split"><span>✂️</span> Dividir stack</button>
+        <div class="ctx-sep"></div>
+        <button class="ctx-item" data-action="drop-one"><span>📤</span> Jogar 1 no chão</button>
+        <button class="ctx-item" data-action="drop-all"><span>📦</span> Jogar tudo no chão</button>
+        <div class="ctx-sep"></div>
+        <button class="ctx-item danger" data-action="delete"><span>🗑️</span> Destruir item</button>
+    </div>
+
+    <!-- ============================ TOOLTIP ============================ -->
+    <div id="tooltip" class="tooltip hidden">
+        <div class="tt-name" id="tt-name"></div>
+        <div class="tt-meta" id="tt-meta"></div>
+        <div class="tt-desc" id="tt-desc"></div>
+    </div>
+
+    <!-- ============================ PROMPT DE QUANTIDADE ============================ -->
+    <div id="amount-modal" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-title">Quantidade</div>
+            <input type="number" id="amount-input" min="1" value="1" />
+            <div class="modal-actions">
+                <button id="amount-cancel" class="btn ghost">Cancelar</button>
+                <button id="amount-confirm" class="btn primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

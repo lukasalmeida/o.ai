@@ -4,9 +4,12 @@ const RES = (typeof GetParentResourceName === 'function') ? GetParentResourceNam
 const post = (name, data = {}) =>
   fetch(`https://${RES}/${name}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application; charset=UTF-8' },
+    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
     body: JSON.stringify(data),
-  }).then((r) => r.json()).catch(() => ({ ok: false }));
+  }).then((r) => r.json()).catch((err) => {
+    console.error(`[cpanel] callback "${name}" falhou:`, err);
+    return { ok: false };
+  });
 
 // Envia uma acao para o servidor (via client)
 const exec = (action, data = {}) => post('execute', { action, data });
@@ -42,18 +45,26 @@ $$('.nav-item').forEach((btn) => {
 });
 
 // ---------- Fechar ----------
+let isOpen = false;
+
 const close = () => {
+  if (!isOpen) return; // evita fechar duas vezes (keydown + keyup)
+  isOpen = false;
   $('#backdrop').classList.add('hidden');
   post('close');
 };
 $('#close-btn').addEventListener('click', close);
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' || e.keyCode === 27) {
-    e.preventDefault();
-    e.stopPropagation();
-    close();
-  }
-});
+
+// ESC em keydown (reacao imediata) e em keyup (garantia caso o keydown
+// seja consumido pelo jogo/pause menu antes de chegar aqui).
+const onEsc = (e) => {
+  if (e.key !== 'Escape' && e.keyCode !== 27) return;
+  e.preventDefault();
+  e.stopPropagation();
+  close();
+};
+window.addEventListener('keydown', onEsc);
+window.addEventListener('keyup', onEsc);
 
 // ---------- Toasts ----------
 function toast(message, type = 'info') {
@@ -77,11 +88,13 @@ window.addEventListener('message', (e) => {
       status = d.status || status;
       $('#my-id').textContent = `ID ${myId}`;
       $('#stat-id').textContent = myId;
+      isOpen = true;
       $('#backdrop').classList.remove('hidden');
       renderStatus();
       refreshPlayers();
       break;
     case 'hide':
+      isOpen = false;
       $('#backdrop').classList.add('hidden');
       break;
     case 'players':
@@ -300,6 +313,7 @@ const COMMANDS = [
   ['/fix', 'Consertar o veículo atual'],
   ['/dv', 'Remover o veículo mais próximo (até 10m)'],
   ['/dvall <raio>', 'Remover todos os veículos num raio ex: /dvall 100'],
+  ['/police', 'Ligar/desligar o bloqueio da polícia NPC'],
   ['/anuncio <mensagem>', 'Enviar um anúncio para todo o servidor'],
 ];
 

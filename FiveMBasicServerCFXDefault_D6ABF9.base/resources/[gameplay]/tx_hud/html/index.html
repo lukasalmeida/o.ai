@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TX HUD — Orange RP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ===================== SPRITE DE ICONES ===================== -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 21h18M5 21V10M9.5 21V10M14.5 21V10M19 21V10M12 2.5 21 8H3l9-5.5z"/></symbol>
+    <symbol id="i-gun" viewBox="0 0 24 24"><path d="M2 9h11v6h-2l-2 3H6l-1-3H2V9zM13 10h7v2h-7M18.5 12h2v2h-2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10.5c0 6.5-8 12-8 12s-8-5.5-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10.5" r="2.8"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="3.4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16.5 3.3a4 4 0 0 1 0 7.4"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M3 13.5 5 8a2.5 2.5 0 0 1 2.4-1.7h9.2A2.5 2.5 0 0 1 19 8l2 5.5V17h-2.5M5.5 17H3v-3.5"/><circle cx="7" cy="17" r="1.9"/><circle cx="17" cy="17" r="1.9"/><path d="M5 13h14"/></symbol>
+    <symbol id="i-fuel" viewBox="0 0 24 24"><path d="M3 21V4.5A1.5 1.5 0 0 1 4.5 3h6A1.5 1.5 0 0 1 12 4.5V21M3 21h9M12 9h3.5a2 2 0 0 1 2 2v6a1.8 1.8 0 0 0 3.6 0V9.5L17.6 6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10.5" rx="2"/><path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"/></symbol>
+    <symbol id="i-unlock" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10.5" rx="2"/><path d="M7.5 10.5V7A4.5 4.5 0 0 1 16.6 5"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9.5 18h5M10.5 21.5h3M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.6.5.9 1.1 1 1.8h5.6c.1-.7.4-1.3 1-1.8A6.5 6.5 0 0 0 12 2.5z"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6"/></symbol>
+    <symbol id="i-radio" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="12" rx="2"/><path d="M7 8 14.5 2M10 12h.01M14 12h.01M18 12h.01M8 16h8"/></symbol>
+    <symbol id="i-food" viewBox="0 0 24 24"><path d="M7 3v8a3 3 0 0 0 3 3v7M10 3v8M4 3v5a3 3 0 0 0 3 3M17 3c-1.5 2-2 4-2 7s1 4 2 4v7"/></symbol>
+    <symbol id="i-medkit" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="13" rx="2"/><path d="M9 6V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V6M12 10v5M9.5 12.5h5"/></symbol>
+    <symbol id="i-can" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2.5"/><path d="M6 9h12M9 4V2.5h6V4"/></symbol>
+    <symbol id="i-battery" viewBox="0 0 24 24"><rect x="2" y="7" width="17" height="10" rx="2"/><path d="M19 10v4M22 12h.01"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="16" r="4.5"/><path d="M11.4 13 21 3.4M17.5 6.5l2 2M14.5 9.5l2 2"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5V8zM3 8l9 5 9-5M12 13v8"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22a6 6 0 0 0 6-6c0-4-3-5-3-9-3 2-4 4-4 6-1-1-1.5-2-1.5-4C7 11 6 13 6 16a6 6 0 0 0 6 6z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.3.9-4.5 4.3 1 6.2L12 17.1 6.5 20l1-6.2L3 9.5l6.3-.9L12 3z"/></symbol>
+    <symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"/></symbol>
+    <symbol id="i-speedometer" viewBox="0 0 24 24"><path d="M4 17a9 9 0 1 1 16 0M12 12l4-3"/></symbol>
+  </svg>
+
+  <div class="hud" id="hud">
+
+    <!-- ================= INFO DO SERVIDOR (superior direito) ================= -->
+    <header class="server-info glass" id="server-info">
+      <div class="si-logo" id="si-logo">TX</div>
+      <div class="si-body">
+        <div class="si-top">
+          <span class="si-name" id="si-name">TX ROLEPLAY</span>
+          <span class="si-tag" id="si-tag">v1.0.0</span>
+        </div>
+        <div class="si-grid">
+          <div class="si-cell">
+            <svg class="si-ico"><use href="#i-users"/></svg>
+            <span class="si-val"><b id="si-online">34</b> online</span>
+          </div>
+          <div class="si-cell">
+            <svg class="si-ico"><use href="#i-star"/></svg>
+            <span class="si-val">ID <b id="si-id">#1024</b></span>
+          </div>
+          <div class="si-cell si-clock">
+            <svg class="si-ico"><use href="#i-clock"/></svg>
+            <span class="si-val"><b id="si-time">16:54</b></span>
+          </div>
+          <div class="si-cell">
+            <svg class="si-ico"><use href="#i-bulb"/></svg>
+            <span class="si-val" id="si-date">21/10/2026</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= JOGADOR / MINIMAPA (inferior esquerdo) ================= -->
+    <section class="player-block" id="player-block">
+
+      <!-- arma equipada -->
+      <div class="weapon-pill glass" id="weapon-pill">
+        <span class="wp-icon"><svg><use href="#i-gun"/></svg></span>
+        <span class="wp-name" id="weapon-name">PISTOLA</span>
+        <span class="wp-ammo" id="weapon-ammo">30 <i>/</i> 120</span>
+      </div>
+
+      <!-- vitais + minimapa -->
+      <div class="player-row">
+        <div class="vitals glass" id="vitals">
+          <div class="vital">
+            <svg class="v-ico v-hp"><use href="#i-heart"/></svg>
+            <div class="v-track"><i class="v-fill" id="bar-health"></i></div>
+            <span class="v-num" id="val-health">100</span>
+          </div>
+          <div class="vital">
+            <svg class="v-ico v-armor"><use href="#i-shield"/></svg>
+            <div class="v-track"><i class="v-fill" id="bar-armor"></i></div>
+            <span class="v-num" id="val-armor">0</span>
+          </div>
+          <div class="vital">
+            <svg class="v-ico v-stam"><use href="#i-bolt"/></svg>
+            <div class="v-track"><i class="v-fill" id="bar-stamina"></i></div>
+            <span class="v-num" id="val-stamina">100</span>
+          </div>
+        </div>
+
+        <div class="minimap glass" id="minimap">
+          <div class="mm-canvas" id="mm-canvas">
+            <span class="mm-road mm-r1"></span>
+            <span class="mm-road mm-r2"></span>
+            <span class="mm-road mm-r3"></span>
+            <span class="mm-road mm-r4"></span>
+            <span class="mm-road mm-r5"></span>
+            <span class="mm-block mm-b1"></span>
+            <span class="mm-block mm-b2"></span>
+            <span class="mm-block mm-b3"></span>
+            <span class="mm-water"></span>
+          </div>
+          <div class="mm-zone" id="mm-zone">
+            <span class="mm-zone-tag">ZONA SEGURA</span>
+          </div>
+          <div class="mm-arrow" id="mm-arrow">
+            <svg viewBox="0 0 24 24"><path d="M12 2.5 19.5 21 12 16.6 4.5 21 12 2.5z"/></svg>
+          </div>
+          <div class="mm-strip mm-strip-top">
+            <span class="mm-place" id="mm-place">ROUTE 68</span>
+          </div>
+          <div class="mm-strip mm-strip-bottom">
+            <span id="mm-coords">X 120.44 · Y -45.02</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- carteira + banco -->
+      <div class="money-row">
+        <div class="money-chip glass">
+          <svg class="mc-ico mc-cash"><use href="#i-cash"/></svg>
+          <div class="mc-text">
+            <span class="mc-label">Carteira</span>
+            <span class="mc-value" id="money-cash">$ 12.500</span>
+          </div>
+        </div>
+        <div class="money-chip glass">
+          <svg class="mc-ico mc-bank"><use href="#i-bank"/></svg>
+          <div class="mc-text">
+            <span class="mc-label">Banco</span>
+            <span class="mc-value" id="money-bank">$ 148.320</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- nivel / XP -->
+      <div class="xp-card glass">
+        <div class="xp-top">
+          <span class="xp-level" id="xp-level">NV 24</span>
+          <span class="xp-name" id="xp-name">Carlos Mendez</span>
+          <span class="xp-values" id="xp-values">1.240 / 2.000 XP</span>
+        </div>
+        <div class="xp-track">
+          <i class="xp-fill" id="xp-fill"></i>
+          <i class="xp-shine"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VELOCIMETRO (inferior direito) ================= -->
+    <section class="vehicle-block" id="vehicle-block">
+      <div class="speedo glass" id="speedo">
+        <svg class="speedo-svg" viewBox="0 0 260 150" aria-hidden="true">
+          <defs>
+            <linearGradient id="gradSpeed" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#ff5e00"/>
+              <stop offset="55%" stop-color="#ff8c00"/>
+              <stop offset="100%" stop-color="#ffc061"/>
+            </linearGradient>
+            <linearGradient id="gradSide" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#7a2e00"/>
+              <stop offset="100%" stop-color="#ff8c00"/>
+            </linearGradient>
+          </defs>
+          <g class="sp-ticks" id="sp-ticks"></g>
+          <!-- arco de velocidade -->
+          <path class="sp-track" d="M 30 125 A 100 100 0 0 1 230 125" pathLength="100"/>
+          <path class="sp-fill" id="arc-speed" d="M 30 125 A 100 100 0 0 1 230 125" pathLength="100"/>
+          <!-- arco de combustivel (esquerda) -->
+          <path class="sp-side-track" d="M 54 125 A 76 76 0 0 1 116.8 50.2" pathLength="100"/>
+          <path class="sp-side-fill" id="arc-fuel" d="M 54 125 A 76 76 0 0 1 116.8 50.2" pathLength="100"/>
+          <!-- arco de rpm / velocidade maxima (direita) -->
+          <path class="sp-side-track" d="M 143.2 50.2 A 76 76 0 0 1 206 125" pathLength="100"/>
+          <path class="sp-side-fill" id="arc-rpm" d="M 143.2 50.2 A 76 76 0 0 1 206 125" pathLength="100"/>
+        </svg>
+
+        <span class="sp-tag sp-tag-fuel-e">E</span>
+        <span class="sp-tag sp-tag-fuel-f">F</span>
+        <span class="sp-tag sp-tag-rpm" id="rpm-label">RPM 0</span>
+        <span class="sp-tag sp-tag-max" id="max-speed">MAX 220</span>
+
+        <div class="sp-center">
+          <div class="sp-value" id="speed-value">0</div>
+          <div class="sp-unit">KM/H</div>
+          <div class="sp-gear" id="gear-value">D</div>
+        </div>
+      </div>
+
+      <div class="veh-flags" id="veh-flags">
+        <div class="vflag" id="flag-engine"><svg><use href="#i-car"/></svg><span>MOTOR</span></div>
+        <div class="vflag" id="flag-lights"><svg><use href="#i-bulb"/></svg><span>FAROL</span></div>
+        <div class="vflag" id="flag-lock"><svg><use href="#i-lock"/></svg><span>TRANCADO</span></div>
+        <div class="vflag" id="flag-belt"><svg><use href="#i-shield"/></svg><span>CINTO</span></div>
+      </div>
+    </section>
+
+    <!-- ================= PAINEL DE MISSOES / TASKS (direita) ================= -->
+    <aside class="tasks" id="tasks">
+      <div class="tasks-head">
+        <svg><use href="#i-crosshair"/></svg>
+        <span id="tasks-title">Tarefas ativas</span>
+        <i class="tasks-count" id="tasks-count">3</i>
+      </div>
+
+      <article class="task-card" data-task="1">
+        <div class="task-head">
+          <span class="task-icon"><svg><use href="#i-pin"/></svg></span>
+          <div class="task-titles">
+            <h3 class="task-title">Rota do contrabando</h3>
+            <p class="task-desc">Entregue a carga no deposito de Sandy Shores e volte antes das 22:00.</p>
+          </div>
+          <span class="task-key">F</span>
+        </div>
+        <div class="task-prog"><i id="task-prog-1"></i></div>
+        <div class="task-foot">
+          <span class="task-dist">1.8 km</span>
+          <span class="task-reward">$ 5.000</span>
+        </div>
+      </article>
+
+      <article class="task-card" data-task="2">
+        <div class="task-head">
+          <span class="task-icon"><svg><use href="#i-pin"/></svg></span>
+          <div class="task-titles">
+            <h3 class="task-title">Investigar oружиamento</h3>
+            <p class="task-desc">Colete pistas no porto de Los Santos e identifique o responsavel.</p>
+          </div>
+          <span class="task-key">G</span>
+        </div>
+        <div class="task-prog"><i id="task-prog-2"></i></div>
+        <div class="task-foot">
+          <span class="task-dist">620 m</span>
+          <span class="task-reward">$ 2.400</span>
+        </div>
+      </article>
+
+      <article class="task-card is-done" data-task="3">
+        <div class="task-head">
+          <span class="task-icon"><svg><use href="#i-check"/></svg></span>
+          <div class="task-titles">
+            <h3 class="task-title">Roubo no banco central</h3>
+            <p class="task-desc">Fuga concluida. Volte para o esconderijo.</p>
+          </div>
+          <span class="task-key">H</span>
+        </div>
+        <div class="task-prog"><i id="task-prog-3"></i></div>
+        <div class="task-foot">
+          <span class="task-dist">Concluido</span>
+          <span class="task-reward">$ 12.000</span>
+        </div>
+      </article>
+    </aside>
+
+    <!-- ================= QUICKBAR / ITENS RAPIDOS (inferior central) ================= -->
+    <nav class="quickbar" id="quickbar">
+      <button class="qslot is-active" data-slot="1" type="button">
+        <span class="qkey">1</span>
+        <span class="qicon"><svg><use href="#i-food"/></svg></span>
+        <span class="qcount">3</span>
+        <span class="qlabel">Frango</span>
+      </button>
+      <button class="qslot" data-slot="2" type="button">
+        <span class="qkey">2</span>
+        <span class="qicon"><svg><use href="#i-medkit"/></svg></span>
+        <span class="qcount">5</span>
+        <span class="qlabel">Bandagem</span>
+      </button>
+      <button class="qslot" data-slot="3" type="button">
+        <span class="qkey">3</span>
+        <span class="qicon"><svg><use href="#i-can"/></svg></span>
+        <span class="qcount">12</span>
+        <span class="qlabel">Refrigerante</span>
+      </button>
+      <button class="qslot" data-slot="4" type="button">
+        <span class="qkey">4</span>
+        <span class="qicon"><svg><use href="#i-battery"/></svg></span>
+        <span class="qcount">1</span>
+        <span class="qlabel">Celular</span>
+      </button>
+      <button class="qslot" data-slot="5" type="button">
+        <span class="qkey">5</span>
+        <span class="qicon"><svg><use href="#i-key"/></svg></span>
+        <span class="qcount">2</span>
+        <span class="qlabel">Chave</span>
+      </button>
+      <button class="qslot" data-slot="6" type="button">
+        <span class="qkey">6</span>
+        <span class="qicon"><svg><use href="#i-flame"/></svg></span>
+        <span class="qcount">4</span>
+        <span class="qlabel">Molotov</span>
+      </button>
+      <span class="qsep"></span>
+      <button class="qslot qslot-voice" data-slot="voice" type="button">
+        <span class="qkey">V</span>
+        <span class="qicon"><svg><use href="#i-mic"/></svg></span>
+        <span class="qlevel"><i></i><i></i><i></i><i></i></span>
+      </button>
+    </nav>
+
+    <!-- ================= ALERTA CENTRAL ================= -->
+    <div class="alert" id="alert">
+      <svg><use href="#i-shield"/></svg>
+      <span id="alert-text">Cinto de segurança nao colocado</span>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

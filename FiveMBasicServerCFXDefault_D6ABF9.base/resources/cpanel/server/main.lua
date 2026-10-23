@@ -87,6 +87,27 @@ local TARGET_ACTIONS = {
     car = true,
 }
 
+-- Bloqueio da policia NPC (recurso nopolicia, roda no servidor)
+local function alternarPolicia(src)
+    if GetResourceState('nopolicia') ~= 'started' then
+        notify(src, 'O recurso nopolicia nao esta rodando.', 'error')
+        return
+    end
+
+    local ok, novo = pcall(function()
+        return exports['nopolicia']:toggle(src)
+    end)
+
+    if not ok then
+        notify(src, 'Nao foi possivel alternar o bloqueio da policia.', 'error')
+        return
+    end
+
+    notify(src, ('Policia NPC %s.'):format(novo and 'BLOQUEADA' or 'LIBERADA'),
+        novo and 'success' or 'warning')
+    logAction(src, 'toggleNoPolicia', novo and 'bloqueada' or 'liberada')
+end
+
 RegisterNetEvent('cpanel:execute', function(action, data)
     local src = source
     if not isAdmin(src) then return end
@@ -94,6 +115,12 @@ RegisterNetEvent('cpanel:execute', function(action, data)
 
     -- Acoes em si mesmo
     if action == 'self' then
+        -- a policia e controlada no servidor, entao nao vai para o cliente
+        if data.action == 'toggleNoPolicia' then
+            alternarPolicia(src)
+            return
+        end
+
         if not SELF_ACTIONS[data.action] then return end
         TriggerClientEvent('cpanel:selfAction', src, data.action, data)
         logAction(src, 'self:' .. tostring(data.action))
